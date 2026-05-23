@@ -1,0 +1,47 @@
+﻿Defensive Walls 
+
+
+
+
+SELECT 
+team, 
+            ROUND(AVG(save_pct), 2) as avg_save_percentage
+FROM
+ (
+          SELECT home_team as team, home_saves_pct as save_pct 
+ FROM
+ `business-intelligence-1-478421.UCL_Project_Analysis.UCL_Final_Clean_csv` 
+  WHERE 
+date IS NOT NULL
+  UNION ALL
+         SELECT away_team as team, away_saves_pct as save_pct 
+  FROM 
+`business-intelligence-1-478421.UCL_Project_Analysis.UCL_Final_Clean_csv` 
+  WHERE 
+date IS NOT NULL
+)
+GROUP BY
+ team
+ORDER BY 
+avg_save_percentage DESC;
+
+
+
+
+
+
+Attacking Firepower 
+ 
+SELECT 
+team, SUM(home_goals) as total_home_goals, SUM(away_goals) as total_away_goals, SUM(home_goals + away_goals) as overall_goals 
+FROM (
+ SELECT home_team as team, home_goals, 0 as away_goals 
+FROM
+ `UCL_Project_Analysis.UCL_Final_Clean_csv` 
+WHERE 
+date IS NOT NULL UNION ALL SELECT away_team as team, 0 as home_goals, away_goals 
+FROM 
+`UCL_Project_Analysis.UCL_Final_Clean_csv` WHERE date IS NOT NULL ) GROUP BY 
+team 
+ORDER BY
+ overall_goals DESC;
